@@ -1,26 +1,80 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #080808;
+  --foreground: #ffffff;
+  --accent: #00C97A;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-accent: var(--accent);
+  --font-sans: var(--font-inter);
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-inter), sans-serif;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Hide scrollbar for cleanly designed arc */
+::-webkit-scrollbar {
+  display: none;
+}
+* {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Custom Cursor on hover */
+.cursor-play {
+  cursor: url('data:image/svg+xml;utf8,<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="24" cy="24" r="23" stroke="white" stroke-width="2" fill="rgba(0,0,0,0.2)" backdrop-filter="blur(4px)"/><path d="M30 24L20 30L20 18L30 24Z" fill="white"/></svg>') 24 24, pointer;
+}
+
+/* Heading float */
+@keyframes heading-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+/* Dark-themed video controls */
+video::-webkit-media-controls-panel {
+  background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);
+}
+video::-webkit-media-controls-time-remaining-display,
+video::-webkit-media-controls-current-time-display {
+  color: rgba(255,255,255,0.8);
+}
+
+/* Fullscreen: keep natural aspect ratio, don't stretch */
+video:-webkit-full-screen {
+  width: auto !important;
+  height: 100% !important;
+  max-width: 100vw;
+  object-fit: contain !important;
+  background: #000;
+  margin: 0 auto;
+  display: block;
+}
+video:fullscreen {
+  width: auto !important;
+  height: 100% !important;
+  max-width: 100vw;
+  object-fit: contain !important;
+  background: #000;
+  margin: 0 auto;
+  display: block;
+}
+/* Fullscreen backdrop stays black */
+:-webkit-full-screen {
+  background: #000;
+}
+:fullscreen {
+  background: #000;
 }
