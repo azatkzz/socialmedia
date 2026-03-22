@@ -19,8 +19,8 @@ export const metadata: Metadata = {
   title: "Azat Samat | Marketing Manager",
   description: "Silicon Valley Video Portfolio",
   icons: {
-    icon: [{ url: "/tab.png", type: "image/png" }],
-    apple: [{ url: "/tab.png", type: "image/png" }],
+    icon: [{ url: "/avatar.png", type: "image/png" }],
+    apple: [{ url: "/avatar.png", type: "image/png" }],
   },
 };
 
