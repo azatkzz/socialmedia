@@ -50,7 +50,6 @@ export default function VideoArc() {
   const arcBottomPx   = Math.round(Math.max(36, winH * 0.08));
   const effectiveCardH = Math.round(Math.min(CARD_H, Math.max(210, winH * 0.42)));
   const infoPanelBottom = arcBottomPx + Math.round(effectiveCardH * 1.26);
-  const showSummary    = winH >= 700;
   const headingTop     = Math.round(Math.min(192, winH * 0.22));
 
   useEffect(() => {
@@ -299,16 +298,12 @@ export default function VideoArc() {
                 style={{ fontSize: "clamp(15px, 2vw, 20px)", lineHeight: 1.3 }}>
                 {selected.project.headline}
               </p>
-              <p className="text-white/30 font-normal mt-1.5"
-                style={{ fontSize: "clamp(11px, 1.3vw, 13px)" }}>
+              <p style={{ fontSize: "clamp(11px, 1.3vw, 13px)", color: "rgba(255,255,255,0.55)", marginTop: 6 }}>
                 {selected.project.desc}
               </p>
-              {showSummary && (
-                <p className="text-white/20 font-normal leading-relaxed mt-2"
-                  style={{ fontSize: "clamp(11px, 1.3vw, 13px)" }}>
-                  {selected.project.summary}
-                </p>
-              )}
+              <p style={{ fontSize: "clamp(11px, 1.3vw, 13px)", color: "rgba(255,255,255,0.45)", lineHeight: 1.6, marginTop: 10 }}>
+                {selected.project.summary}
+              </p>
             </motion.div>
           </motion.div>
         )}
