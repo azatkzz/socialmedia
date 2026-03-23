@@ -44,6 +44,22 @@ function scaleForAngle(angle: number): number {
 export default function VideoArc() {
   const [selected, setSelected] = useState<{ project: any; idx: number } | null>(null);
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
+  const [winH, setWinH] = useState(800);
+
+  // Responsive layout values derived from viewport height
+  const arcBottomPx   = Math.round(Math.max(36, winH * 0.08));
+  const effectiveCardH = Math.round(Math.min(CARD_H, Math.max(210, winH * 0.42)));
+  const infoPanelBottom = arcBottomPx + Math.round(effectiveCardH * 1.26);
+  const showSummary    = winH >= 700;
+  const headingTop     = Math.round(Math.min(192, winH * 0.22));
+
+  useEffect(() => {
+    const update = () => setWinH(window.innerHeight);
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
+
   const arcRef = useRef<HTMLDivElement>(null);
   const thumbRef = useRef<HTMLDivElement>(null);
   const offsetRef = useRef(0);
@@ -238,18 +254,18 @@ export default function VideoArc() {
         {!selected && (
           <motion.div
             className="absolute left-1/2 -translate-x-1/2 z-10 select-none pointer-events-none"
-            style={{ top: 160 }}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
+            style={{ top: headingTop }}
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ type: "spring", stiffness: 260, damping: 28 }}
           >
             <h1
               className="text-center leading-none whitespace-nowrap"
               style={{
                 fontFamily: "var(--font-instrument), 'Instrument Serif', serif",
                 fontWeight: 400, fontStyle: "italic",
-                fontSize: "clamp(2rem, 4vw, 3.5rem)",
+                fontSize: "clamp(1.6rem, 3.5vw, 3.2rem)",
                 color: "rgba(255,255,255,0.85)",
               }}
             >
@@ -259,39 +275,40 @@ export default function VideoArc() {
         )}
       </AnimatePresence>
 
-      {/* ── Info label — centered between notch bottom and card top ── */}
-      {/* notch bottom ≈ 80px; card top = viewport − 16vh − CARD_H */}
+      {/* ── Info panel — fills space between notch and card top ── */}
       <AnimatePresence>
         {selected && (
           <motion.div
             key="info"
             className="absolute left-0 right-0 z-30 select-none pointer-events-none flex items-center justify-center"
-            style={{
-              top: 88,                                         /* just below notch (~80px) */
-              bottom: `calc(16vh + ${Math.round(CARD_H * 1.25)}px)`, /* above scaled card top */
-            }}
+            style={{ top: 88, bottom: infoPanelBottom }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
           >
             <motion.div
-              className="flex flex-col items-center text-center px-6"
-              style={{ maxWidth: 440 }}
-              initial={{ y: 10 }}
+              className="flex flex-col items-center text-center px-8"
+              style={{ maxWidth: 460 }}
+              initial={{ y: 14 }}
               animate={{ y: 0 }}
-              exit={{ y: 6 }}
-              transition={{ duration: 0.3, ease: "easeOut" }}
+              exit={{ y: 8 }}
+              transition={{ type: "spring", stiffness: 280, damping: 26 }}
             >
-              <p className="text-white font-semibold tracking-tight" style={{ fontSize: 20, lineHeight: 1.3 }}>
+              <p className="text-white font-semibold tracking-tight"
+                style={{ fontSize: "clamp(15px, 2vw, 20px)", lineHeight: 1.3 }}>
                 {selected.project.headline}
               </p>
-              <p className="text-white/30 font-normal mt-1.5" style={{ fontSize: 13 }}>
+              <p className="text-white/30 font-normal mt-1.5"
+                style={{ fontSize: "clamp(11px, 1.3vw, 13px)" }}>
                 {selected.project.desc}
               </p>
-              <p className="text-white/20 font-normal leading-relaxed mt-3" style={{ fontSize: 13 }}>
-                {selected.project.summary}
-              </p>
+              {showSummary && (
+                <p className="text-white/20 font-normal leading-relaxed mt-2"
+                  style={{ fontSize: "clamp(11px, 1.3vw, 13px)" }}>
+                  {selected.project.summary}
+                </p>
+              )}
             </motion.div>
           </motion.div>
         )}
@@ -307,14 +324,14 @@ export default function VideoArc() {
         <div
           ref={arcRef}
           className="absolute left-1/2 -translate-x-1/2"
-          style={{ bottom: "16vh" }}
+          style={{ bottom: arcBottomPx }}
         >
           {ALL_CARDS.map((project, i) => (
             <div
               key={`arc-${i}`}
               className="absolute"
               style={{
-                width: CARD_W, height: CARD_H,
+                width: CARD_W, height: effectiveCardH,
                 left: -(CARD_W / 2), bottom: 0,
                 transformOrigin: `50% ${PIVOT}px`,
                 willChange: "transform",
@@ -335,7 +352,7 @@ export default function VideoArc() {
                 onMouseLeave={() => { if (!selected) setHoveredIdx(null); }}
                 className="cursor-play"
                 style={{
-                  width: CARD_W, height: CARD_H,
+                  width: CARD_W, height: effectiveCardH,
                   borderRadius: 22, overflow: "hidden",
                   transformOrigin: "50% 100%",
                   willChange: "transform",
@@ -344,7 +361,7 @@ export default function VideoArc() {
                     : selected?.idx === i
                     ? `0 24px 60px -8px ${project.color}, 0 0 0 1px rgba(255,255,255,0.15)`
                     : "0 6px 20px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.07)",
-                  transition: "box-shadow 0.4s ease",
+                  transition: "box-shadow 0.35s ease",
                 }}
               >
                 <CardContent project={project} isSelected={!!(selected && selected.idx === i)} />
