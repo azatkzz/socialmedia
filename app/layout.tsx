@@ -18,10 +18,6 @@ const instrumentSerif = Instrument_Serif({
 export const metadata: Metadata = {
   title: "Azat Samat | Marketing Manager",
   description: "Silicon Valley Video Portfolio",
-  icons: {
-    icon: [{ url: "/avatar.png", type: "image/png" }],
-    apple: [{ url: "/avatar.png", type: "image/png" }],
-  },
 };
 
 export default function RootLayout({
